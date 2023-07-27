@@ -9,15 +9,21 @@ import (
 type M map[string]interface{}
 
 func main() {
-	var template, err = template.ParseGlob("views/*")
-	if err != nil {
-		panic(err.Error())
-		// return
-	}
+	// var template, err = template.ParseGlob("views/*")
+	// if err != nil {
+	// 	panic(err.Error())
+	// 	// return
+	// }
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		var data = M{"name": "Batman"}
-		err = template.ExecuteTemplate(w, "index", data)
+		var template = template.Must(template.ParseFiles(
+			"views/index.html",
+			"views/_header.html",
+			"views/_message.html",
+		))
+
+		var err = template.ExecuteTemplate(w, "index", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -25,7 +31,13 @@ func main() {
 
 	http.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
 		var data = M{"name": "Batman"}
-		err = template.ExecuteTemplate(w, "about", data)
+		var template = template.Must(template.ParseFiles(
+			"views/about.html",
+			"views/_header.html",
+			"views/_message.html",
+		))
+
+		var err = template.ExecuteTemplate(w, "about", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
